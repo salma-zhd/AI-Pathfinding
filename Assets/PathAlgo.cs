@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Astar1 : MonoBehaviour {
+public class PathAlgo : MonoBehaviour {
 
 	public Transform seeker, target;
 	Grid grid;
@@ -92,5 +92,28 @@ public class Astar1 : MonoBehaviour {
 		if (dstX > dstY)
 			return 14 * dstY + 10 * (dstX - dstY);
 		return 14 * dstX + 10 * (dstY - dstX);
+	}
+}
+public void DFS(){
+	Stack fringe = new Stack();
+	fringe.Push(startNode);
+	Node currentNode;
+	while(fringe.Count > 0)
+	{
+	currentNode = (Node) fringe.Pop();
+	count++;
+	if (currentNode == targetNode){
+        RetracePath(startNode,targetNode,ref grid.DFSPath);
+        return;
+	}
+    List<Node> neighbours = new List<Node>();
+    foreach(Node n in grid.GetNeighbours(node)){
+        if (n.walkable)
+        neighbours.Add(n);
+	}
+ 	foreach(Node neighbour in neighbours){
+		neighbour.parent = currentNode;
+		fringe.Push(neighbour);
+	}
 	}
 }

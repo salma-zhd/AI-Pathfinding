@@ -2,22 +2,32 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Grid : MonoBehaviour {
+public class Grid : MonoBehaviour
+{
+
+	public bool onlyDisplayPathGizmos;
 	public LayerMask unwalkableMask;
 	public Vector2 gridWorldSize;
-	public float nodeRadius; 
-	public List<Node> closedSet;
+	public float nodeRadius;
 	Node[,] grid;
 
 	float nodeDiameter;
 	int gridSizeX, gridSizeY;
 
-	void Awake()
+	void Start()
 	{
 		nodeDiameter = nodeRadius * 2;
 		gridSizeX = Mathf.RoundToInt(gridWorldSize.x / nodeDiameter);
 		gridSizeY = Mathf.RoundToInt(gridWorldSize.y / nodeDiameter);
 		CreateGrid();
+	}
+
+	public int MaxSize
+	{
+		get
+		{
+			return gridSizeX * gridSizeY;
+		}
 	}
 
 	void CreateGrid()
@@ -73,20 +83,92 @@ public class Grid : MonoBehaviour {
 		return grid[x, y];
 	}
 
-	public List<Node> path;
+	public List<Node> BFSpath;
+	public List<Node> DFSpath;
+	public List<Node> UCSpath;
+	public List<Node> AStarpath1;
+	public List<Node> AStarpath2;
+
 	void OnDrawGizmos()
 	{
 		Gizmos.DrawWireCube(transform.position, new Vector3(gridWorldSize.x, 1, gridWorldSize.y));
 
-		if (grid != null)
+		if (onlyDisplayPathGizmos)
 		{
-			foreach (Node n in grid)
+			if (BFSpath != null)
 			{
-				Gizmos.color = (n.walkable) ? Color.white : Color.red;
-				if (path != null)
-					if (path.Contains(n))
-						Gizmos.color = Color.black;
-				Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - .1f));
+				foreach (Node n in BFSpath)
+				{
+					Gizmos.color = Color.magenta;
+					Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - .1f));
+				}
+			}
+
+			if (DFSpath != null)
+			{
+				foreach (Node n in DFSpath)
+				{
+					Gizmos.color = Color.green;
+					Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - .1f));
+				}
+			}
+
+			if (UCSpath != null)
+			{
+				foreach (Node n in UCSpath)
+				{
+					Gizmos.color = Color.yellow;
+					Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - .1f));
+				}
+			}
+
+			if (AStarpath1 != null)
+			{
+				foreach (Node n in AStarpath1)
+				{
+					Gizmos.color = Color.blue;
+					Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - .1f));
+				}
+			}
+
+			if (AStarpath2 != null)
+			{
+				foreach (Node n in AStarpath2)
+				{
+					Gizmos.color = Color.cyan;
+					Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - .1f));
+				}
+			}
+		}
+		else
+		{
+			if (grid != null)
+			{
+				foreach (Node n in grid)
+				{
+					Gizmos.color = (n.walkable) ? Color.white : Color.red;
+					if (BFSpath != null)
+						if (BFSpath.Contains(n))
+							Gizmos.color = Color.magenta;
+
+					if (DFSpath != null)
+						if (DFSpath.Contains(n))
+							Gizmos.color = Color.green;
+
+					if (UCSpath != null)
+						if (UCSpath.Contains(n))
+							Gizmos.color = Color.yellow;
+
+					if (AStarpath1 != null)
+						if (AStarpath1.Contains(n))
+							Gizmos.color = Color.blue;
+
+					if (AStarpath2 != null)
+						if (AStarpath2.Contains(n))
+							Gizmos.color = Color.cyan;
+
+					Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter - .1f));
+				}
 			}
 		}
 	}

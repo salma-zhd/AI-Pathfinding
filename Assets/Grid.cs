@@ -5,7 +5,8 @@ using UnityEngine;
 public class Grid : MonoBehaviour {
 	public LayerMask unwalkableMask;
 	public Vector2 gridWorldSize;
-	public float nodeRadius;
+	public float nodeRadius; 
+	public List<Node> closedSet;
 	Node[,] grid;
 
 	float nodeDiameter;
